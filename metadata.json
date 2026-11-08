@@ -1,0 +1,6 @@
+{
+  "name": "ASCII Sharks CLI",
+  "description": "Interactive command-line interface and randomized ASCII shark animation generator powered by stackedlol/ascii-sharks with species customization, feeding physics, and retro CRT terminal aesthetics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
