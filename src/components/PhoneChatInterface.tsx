@@ -424,7 +424,10 @@ export const PhoneChatInterface: React.FC<PhoneChatInterfaceProps> = ({
       )}
 
       {/* Lower Section: Blur & Transparency Scale + Start Button Controller */}
-      <div className="w-full max-w-sm mx-auto pointer-events-auto flex flex-col items-center gap-2 pb-1">
+      <div
+        className="w-full max-w-sm mx-auto pointer-events-auto flex flex-col items-center gap-2"
+        style={{ paddingBottom: "max(10px, env(safe-area-inset-bottom))" }}
+      >
         {/* Blur & Transparency Scale Panel */}
         {scalePanelOpen ? (
           <div

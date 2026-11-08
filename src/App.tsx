@@ -38,6 +38,13 @@ export default function App() {
   const [isBlackAndWhite, setIsBlackAndWhite] = useState(true);
   const [scalePanelOpen, setScalePanelOpen] = useState(true);
 
+  // Auto-detect mobile screen (like iPhone) to render edge-to-edge without double phone frames
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth <= 640) {
+      setViewMode("fullscreen");
+    }
+  }, []);
+
   // Keep clock updated
   useEffect(() => {
     const updateTime = () => {
@@ -109,7 +116,7 @@ export default function App() {
         className={`relative transition-all duration-300 flex flex-col overflow-hidden ${
           viewMode === "phone"
             ? "w-full max-w-[400px] h-[92vh] max-h-[850px] rounded-[48px] border-[10px] border-[#18181b] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] bg-white ring-1 ring-black/10"
-            : "w-full h-full rounded-none border-0"
+            : "w-full h-[100dvh] rounded-none border-0"
         }`}
       >
         {/* Modern Smartphone Status Bar (Top Notch & Info) */}
