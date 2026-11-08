@@ -27,6 +27,7 @@ import { OceanEngine, type SharkKind } from "../engine";
 import { SIMULATION_PRESETS } from "../data/presets";
 import { soundFX } from "../utils/audio";
 import { generateLocalBashScript } from "../utils/bashGenerator";
+import { downloadProjectArchive } from "../utils/downloadArchive";
 
 interface PhoneChatInterfaceProps {
   engineRef: React.MutableRefObject<OceanEngine | null>;
@@ -79,7 +80,15 @@ export const PhoneChatInterface: React.FC<PhoneChatInterfaceProps> = ({
   const [copied, setCopied] = useState(false);
   const [gitCopied, setGitCopied] = useState(false);
   const [githubModalOpen, setGithubModalOpen] = useState(false);
+  const [downloadSuccess, setDownloadSuccess] = useState(false);
   const [sharkCount, setSharkCount] = useState(7);
+
+  const handleDownloadArchive = () => {
+    if (soundEnabled) soundFX.playKeypress();
+    downloadProjectArchive("shark-ui.tar.gz");
+    setDownloadSuccess(true);
+    setTimeout(() => setDownloadSuccess(false), 3000);
+  };
 
   // Sync state with engine
   useEffect(() => {
@@ -786,14 +795,27 @@ export const PhoneChatInterface: React.FC<PhoneChatInterfaceProps> = ({
                 <div className="font-medium text-neutral-800 dark:text-neutral-200 mb-1">
                   Or download complete source archive:
                 </div>
-                <a
-                  href="/shark-ui.tar.gz"
-                  download="shark-ui.tar.gz"
-                  className="w-full py-2.5 px-4 rounded-xl border flex items-center justify-center gap-2 font-medium transition active:scale-95 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-100 border-neutral-200 dark:border-neutral-700"
+                <button
+                  type="button"
+                  onClick={handleDownloadArchive}
+                  className={`w-full py-2.5 px-4 rounded-xl border flex items-center justify-center gap-2 font-medium transition active:scale-95 shadow-sm ${
+                    downloadSuccess
+                      ? "bg-emerald-600 text-white border-emerald-600"
+                      : "bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100 border-transparent"
+                  }`}
                 >
-                  <Download className="w-3.5 h-3.5" />
-                  <span>Download shark-ui.tar.gz (426 KB)</span>
-                </a>
+                  {downloadSuccess ? (
+                    <>
+                      <Check className="w-4 h-4 text-white" />
+                      <span>Downloaded! Check Downloads Folder</span>
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-4 h-4" />
+                      <span>Download shark-ui.tar.gz (Instant In-Browser)</span>
+                    </>
+                  )}
+                </button>
               </div>
             </div>
           </div>
