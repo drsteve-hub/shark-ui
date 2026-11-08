@@ -19,6 +19,9 @@ import {
   Sparkles,
   SlidersHorizontal,
   Eye,
+  Github,
+  Download,
+  ExternalLink,
 } from "lucide-react";
 import { OceanEngine, type SharkKind } from "../engine";
 import { SIMULATION_PRESETS } from "../data/presets";
@@ -74,6 +77,8 @@ export const PhoneChatInterface: React.FC<PhoneChatInterfaceProps> = ({
   const [presetMenuOpen, setPresetMenuOpen] = useState(false);
   const [feedback, setFeedback] = useState<ActionFeedback | null>(null);
   const [copied, setCopied] = useState(false);
+  const [gitCopied, setGitCopied] = useState(false);
+  const [githubModalOpen, setGithubModalOpen] = useState(false);
   const [sharkCount, setSharkCount] = useState(7);
 
   // Sync state with engine
@@ -338,6 +343,22 @@ export const PhoneChatInterface: React.FC<PhoneChatInterfaceProps> = ({
             }`}
           >
             <FileCode2 className="w-3.5 h-3.5" />
+          </button>
+
+          {/* GitHub Repo & Push Guide Modal Trigger */}
+          <button
+            onClick={() => {
+              if (soundEnabled) soundFX.playKeypress();
+              setGithubModalOpen(true);
+            }}
+            title="Push to GitHub: shark-ui"
+            className={`p-2 rounded-full transition active:scale-95 shadow-xs border ${
+              isLight
+                ? "bg-white/90 text-neutral-700 hover:text-neutral-900 border-neutral-200/90 hover:bg-neutral-50"
+                : "bg-neutral-900/90 text-neutral-300 hover:text-white border-neutral-800 hover:bg-neutral-800"
+            }`}
+          >
+            <Github className="w-3.5 h-3.5" />
           </button>
 
           {/* View Mode Toggle (Phone / Fullscreen) */}
@@ -672,6 +693,109 @@ export const PhoneChatInterface: React.FC<PhoneChatInterfaceProps> = ({
           </button>
         </div>
       </div>
+
+      {/* GitHub Repository Push Modal */}
+      {githubModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-150 pointer-events-auto">
+          <div
+            className={`w-full max-w-md rounded-3xl border p-5 sm:p-6 shadow-2xl relative ${
+              isLight
+                ? "bg-white text-neutral-900 border-neutral-200 shadow-neutral-300/60"
+                : "bg-[#0f1117] text-neutral-100 border-neutral-800 shadow-black/90"
+            }`}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3 mb-4 border-b border-neutral-100 dark:border-neutral-800">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-neutral-900 text-white dark:bg-white dark:text-neutral-900">
+                  <Github className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold tracking-tight">Push to GitHub: shark-ui</h3>
+                  <p className="text-[11px] text-neutral-400">Git repository initialized & committed</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setGithubModalOpen(false)}
+                className="p-1.5 rounded-full text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Step 1: Create repo on GitHub */}
+            <div className="space-y-4 text-xs font-sans">
+              <div>
+                <div className="font-medium text-neutral-800 dark:text-neutral-200 mb-1 flex items-center justify-between">
+                  <span>Step 1: Create repository on GitHub</span>
+                  <a
+                    href="https://github.com/new"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[11px] text-sky-600 hover:underline flex items-center gap-1 font-normal"
+                  >
+                    <span>Open GitHub</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+                <p className="text-[11px] text-neutral-500 leading-relaxed">
+                  Go to GitHub and create a new repository named <strong>shark-ui</strong> (or <strong>shark-UI</strong>). Leave it blank (do not initialize with README).
+                </p>
+              </div>
+
+              {/* Step 2: Push commands */}
+              <div>
+                <div className="font-medium text-neutral-800 dark:text-neutral-200 mb-1 flex items-center justify-between">
+                  <span>Step 2: Run in your terminal to push</span>
+                  <button
+                    onClick={() => {
+                      const snippet = `git remote add origin https://github.com/YOUR_USERNAME/shark-ui.git\ngit branch -M main\ngit push -u origin main`;
+                      navigator.clipboard.writeText(snippet);
+                      setGitCopied(true);
+                      setTimeout(() => setGitCopied(false), 2000);
+                    }}
+                    className="text-[11px] text-sky-600 hover:underline flex items-center gap-1"
+                  >
+                    {gitCopied ? (
+                      <>
+                        <Check className="w-3 h-3 text-emerald-600" />
+                        <span className="text-emerald-600 font-medium">Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3" />
+                        <span>Copy commands</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+                <div className="bg-neutral-900 text-neutral-200 rounded-xl p-3 font-mono text-[11px] leading-relaxed border border-neutral-800 overflow-x-auto select-all">
+                  <div className="text-neutral-400"># Link to your new repository</div>
+                  <div>git remote add origin https://github.com/&lt;USERNAME&gt;/shark-ui.git</div>
+                  <div className="text-neutral-400 mt-1"># Push the main branch</div>
+                  <div>git branch -M main</div>
+                  <div>git push -u origin main</div>
+                </div>
+              </div>
+
+              {/* Direct Download alternative */}
+              <div className="pt-2 border-t border-neutral-100 dark:border-neutral-800">
+                <div className="font-medium text-neutral-800 dark:text-neutral-200 mb-1">
+                  Or download complete source archive:
+                </div>
+                <a
+                  href="/shark-ui.tar.gz"
+                  download="shark-ui.tar.gz"
+                  className="w-full py-2.5 px-4 rounded-xl border flex items-center justify-center gap-2 font-medium transition active:scale-95 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-100 border-neutral-200 dark:border-neutral-700"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download shark-ui.tar.gz (426 KB)</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
